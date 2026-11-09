@@ -1,24 +1,66 @@
+
 <?php
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-protected [Fillable(['name', 'email', 'password'])]
-#[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
-    
     use HasFactory, Notifiable;
-    protected [Fillable(['name', 'email', 'password','role' 'provider_id'])]
-    protected $casts = ['password' => 'hashed'];
-    const Role_Customer = 'customer', Role_Provider='provider',Role_Admin='admin';
 
-    
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+    ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+        ];
+    }
+
+    // Services advertised by this provider
+    public function services(): HasMany
+    {
+        return $this->hasMany(Service::class);
+    }
+
+    // Bookings made by this customer
+    public function bookings(): HasMany
+    {
+        return $this->hasMany(
+            Booking::class,
+            'customer_id'
+        );
+    }
+
+    // Bookings received by this provider
+    public function receivedBookings(): HasMany
+    {
+        return $this->hasMany(
+            Booking::class,
+            'provider_id'
+        );
+    }
+
+    // Reviews written by this customer
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(
+            Review::class,
+            'customer_id'
+        );
+    }
 }
