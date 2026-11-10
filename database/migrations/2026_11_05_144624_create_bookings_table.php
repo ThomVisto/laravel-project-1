@@ -11,10 +11,30 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('bookings', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+       Schema::create('bookings', function (Blueprint $table) {
+    $table->id();
+
+    $table->foreignId('service_id')
+        ->constrained('services')
+        ->restrictOnDelete();
+
+    $table->foreignId('customer_id')
+        ->constrained('users')
+        ->restrictOnDelete();
+
+    $table->foreignId('provider_id')
+        ->constrained('users')
+        ->restrictOnDelete();
+
+    $table->date('booking_date');
+    $table->time('booking_time');
+
+    $table->decimal('price', 10, 2);
+
+    $table->string('status')->default('pending');
+
+    $table->timestamps();
+});
     }
 
     /**

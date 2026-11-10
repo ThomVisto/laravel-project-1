@@ -12,9 +12,31 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('reviews', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+    $table->id();
+
+    $table->foreignId('booking_id')
+        ->unique()
+        ->constrained('bookings')
+        ->cascadeOnDelete();
+
+    $table->foreignId('service_id')
+        ->constrained('services')
+        ->restrictOnDelete();
+
+    $table->foreignId('customer_id')
+        ->constrained('users')
+        ->restrictOnDelete();
+
+    $table->foreignId('provider_id')
+        ->constrained('users')
+        ->restrictOnDelete();
+
+    $table->unsignedTinyInteger('rating');
+    $table->text('comment')->nullable();
+
+    $table->timestamps();
+});
+
     }
 
     /**
